@@ -42,8 +42,49 @@ const deleteItem = (req, res) => {
   .catch((err) => {
     res.status(500).send({message:"Error from deleteItem", err})
   })
+}
+
+const likeClothingItem = (req, res, next) => {
+    console.log(typeof req.user._id);
+    ClothingItem.findByIdAndUpdate(
+      req.params.itemId,
+      { $addToSet: { likes: req.user._id } },
+      { new: true }
+    )
+      .orFail()
+      .then((item) => res.status(200).send(item))
+      .catch((err) => {
+        if (err.name === "DocumentNotFoundError") {
+          next(new NotFoundError("Request was not found"));
+        } else if (err.name === "CastError") {
+          next(new BadRequestError("Format is invalid"));
+        } else {
+          next(err);
+        }
+      });
+  };
+
+const unlikeClothingItem = (req, res, next) => {
+    ClothingItem.findByIdAndUpdate(
+      req.params.itemId,
+      { $pull: { likes: req.user._id } },
+      { new: true }
+    )
+      .orFail()
+      .then((item) => res.send(item))
+      .catch((err) => {
+        console.error(err);
+        if (err.name === "DocumentNotFoundError") {
+          next(new NotFoundError("Request was not found"));
+        } else if (err.name === "CastError") {
+          next(new BadRequestError("Format is invalid"));
+        } else {
+          next(err);
+        }
+      });
+
 
 }
 
 
-module.exports = { createItem, getItems, updateItem, deleteItem };
+module.exports = { createItem, getItems, updateItem, deleteItem, likeClothingItem, unlikeClothingItem };

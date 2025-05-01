@@ -1,5 +1,4 @@
 module.exports = {
-  root: true,
   env: {
     es2021: true,
     node: true,
@@ -20,5 +19,11 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  rules: {},
+  rules: {
+    "no-console": ["off"],
+    "no-underscore-dangle": ["error", { allow: ["_id"] }],
+    "consistent-return": "off",
+    "no-unused-vars": ["error", { argsIgnorePattern: "next" }],
+
+  },
 };
