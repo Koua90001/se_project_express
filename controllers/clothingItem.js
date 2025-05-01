@@ -4,20 +4,21 @@ const createItem = (req, res) => {
   console.log(req)
   console.log(req.body)
 
-  const{ name, weather, imageURL } = req.body;
+  const{ name, weather, imageUrl } = req.body;
 
-  ClothingItem.create({name,weather, imageURL}).then((item)=> {
-  console.log(item);
-  res.send({data:item})
+
+  ClothingItem.create({ name, weather,imageUrl }) // error
+  .then((item)=> {
+    return res.status(201).send({ data:item });
   }).catch((err) => {
-    return res.status(500).send({ message: err.message});
-  })
-};
+    res.status(400).send({ message: 'Validation error'});
+  });
+}
 
 const getItems = (req, res) => {
   ClothingItem.find({}).then((items) => res.status(200).send(items))
   .catch((err) => {
-     res.status(500).send({message:"Error from getItems", err})
+     return res.status(500).send({message:"Error from getItems", err})
   })
 
 }

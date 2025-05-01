@@ -5,15 +5,15 @@ const userSchema = new mongoose.Schema({
    name: {
     type: String,
     required: true,
-    minlengh: 2,
-    maxlengh: 30
+    minlength: 2,
+    maxlength: 30
   },
    avatar: {
     type: String,
     required: [true, "The avatar field is required."],
     validate: {
       validator(value) {
-        return validator.isURL(value);
+        return validator.isUrl(value);
       },
       message: 'You must enter a valid URL',
     },
