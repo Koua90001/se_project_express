@@ -15,14 +15,29 @@ const clothingItemSchema = new mongoose.Schema({
    imageUrl:  {
      type: String,
      required: true,
+
     validate: {
       validator(value) {
-        return validator.isUrl(value);
+        return validator.isURL(value);
       },
       message: 'Link is not Valid',
     },
   },
+owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "user",
+  },
 
+  likes: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
+    default: [],
+  },
+
+  createdAt: {
+    type: Date,
+    value: Date.now(),
+  },
 
 });
 
