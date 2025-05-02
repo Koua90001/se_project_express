@@ -1,4 +1,6 @@
 const ClothingItem = require("../models/clothingItem")
+const { BadRequestError } = require("../utils/errors/BadRequestError");
+const { NotFoundError } = require("../utils/errors/NotFoundError");
 
 const createItem = (req, res, next) => {
   console.log(req)
@@ -51,19 +53,19 @@ const likeClothingItem = (req, res, next) => {
     ClothingItem.findByIdAndUpdate(
       req.params.itemId,
       { $addToSet: { likes: req.user._id } },
-      { new: true }
+      { new: true, runValidators: true }
     )
-      .orFail()
-      .then((item) => res.status(200).send(item))
-      .catch((err) => {
-        if (err.name === "DocumentNotFoundError") {
-          next(new NotFoundError("Request was not found"));
-        } else if (err.name === "CastError") {
-          next(new BadRequestError("Format is invalid"));
-        } else {
-          next(err);
-        }
-      });
+    .orFail()
+    .then((item) => res.status(200).send(item))
+    .catch((err) => {
+      if (err.name === "DocumentNotFoundError") {
+        next(new NotFoundError("Request was not found"));
+      } else if (err.name === "CastError") {
+        next(new BadRequestError("Format is invalid"));
+      } else {
+        next(err);
+      }
+    });
   };
 
 const unlikeClothingItem = (req, res, next) => {
