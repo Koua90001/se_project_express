@@ -1,6 +1,7 @@
-const ClothingItem = require("../models/clothingItem")
+const clothingItem = require("../models/clothingItem")
 const { BadRequestError } = require("../utils/errors/BadRequestError");
 const { NotFoundError } = require("../utils/errors/NotFoundError");
+const { ForbiddenError } = require("../utils/errors/ForbiddenError");
 
 const createItem = (req, res, next) => {
   console.log(req)
@@ -10,7 +11,7 @@ const createItem = (req, res, next) => {
   console.log(req.user._id);
 
 
-  ClothingItem.create({ name, weather,imageUrl, owner: req.user._id }) // error
+  clothingItem.create({ name, weather,imageUrl, owner: req.user._id }) // error
   .then((item)=> {
     return res.status(201).send({ data:item });
   }).catch((err) => {
@@ -18,39 +19,56 @@ const createItem = (req, res, next) => {
   });
 }
 
-const getItems = (req, res) => {
-  ClothingItem.find({}).then((items) => res.status(200).send(items))
-  .catch((err) => {
-     return res.status(500).send({message:"Error from getItems", err})
-  })
-
-}
+const getItems = (req, res, next) => {
+  clothingItem
+    .find({})
+    .then((items) => res.send({ items }))
+    .catch((err) => {
+      console.error(err);
+      next( );
+    });
+};
 
 const updateItem  = (req, res) => {
   const{itemId} = req.params;
   const{imageURL} = req.body;
 
-ClothingItem.findByIdAndUpdate(itemId, {$set: {imageURL}}).orFail().then((item) => res.status(200).send({data:item}))
+clothingItem.findByIdAndUpdate(itemId, {$set: {imageURL}})
+.orFail()
+.then((item) => res.status(200).send({data:item}))
 .catch((err) => {
   res.status(500).send({message:"Error from updateItem", err})
 })
 
 }
 
-const deleteItem = (req, res) => {
-  const{ itemId } = req.params;
+const deleteItem = (req, res, next) => {
+  const { itemId } = req.params;
+  const userId = req.user._id;
 
-  console.log(itemId);
-  ClothingItem.findByIdAndDelete(itemId).orFail().then((item)=> res.status(204).send({}))
-
-  .catch((err) => {
-    res.status(500).send({message:"Error from deleteItem", err})
-  })
-}
+  clothingItem
+    .findById(itemId)
+    .orFail(() => new NotFoundError("Clothing item not found"))
+    .then((item) => {
+      if (item.owner.toString() !== userId.toString()) {
+        throw new ForbiddenError("You are not the owner of this item");
+      }
+      return clothingItem.findByIdAndDelete(itemId).then((deletedItem) => {
+        res.send({ message: "Item deleted successfully", deletedItem });
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "CastError") {
+        return next(new BadRequestError("Invalid clothing item ID"));
+      }
+      return next(err);
+    });
+};
 
 const likeClothingItem = (req, res, next) => {
     console.log(typeof req.user._id);
-    ClothingItem.findByIdAndUpdate(
+    clothingItem.findByIdAndUpdate(
       req.params.itemId,
       { $addToSet: { likes: req.user._id } },
       { new: true, runValidators: true }
@@ -69,7 +87,7 @@ const likeClothingItem = (req, res, next) => {
   };
 
 const unlikeClothingItem = (req, res, next) => {
-    ClothingItem.findByIdAndUpdate(
+    clothingItem.findByIdAndUpdate(
       req.params.itemId,
       { $pull: { likes: req.user._id } },
       { new: true }
