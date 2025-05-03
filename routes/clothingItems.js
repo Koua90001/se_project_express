@@ -9,10 +9,9 @@ const {
 
 
 
-  
+
 router.post("/", createItem);
 router.get("/", getItems);
-router.delete("/:itemId", () => console.log("DELETE items by ID"));
 router.put("/:itemId", updateItem)
 router.delete("/:itemId", deleteItem);
 router.put("/:itemId/likes", likeClothingItem);

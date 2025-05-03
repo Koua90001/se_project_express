@@ -52,7 +52,7 @@ const deleteItem = (req, res, next) => {
     .then((item) => {
       if (item.owner.toString() !== userId.toString()) {
         throw new ForbiddenError("You are not the owner of this item");
-      }
+     }
       return clothingItem.findByIdAndDelete(itemId).then((deletedItem) => {
         res.send({ message: "Item deleted successfully", deletedItem });
       });
