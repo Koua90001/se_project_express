@@ -55,16 +55,16 @@ const likeClothingItem = (req, res, next) => {
       { $addToSet: { likes: req.user._id } },
       { new: true, runValidators: true }
     )
-    .orFail()
-    .then((item) => res.status(200).send(item))
+    .orFail(() => new NotFoundError("Clothing item not found"))
+    .then((likedItem) => {
+      res.send({ message: "Item liked successfully", likedItem });
+    })
     .catch((err) => {
-      if (err.name === "DocumentNotFoundError") {
-        next(new NotFoundError("Request was not found"));
-      } else if (err.name === "CastError") {
-        next(new BadRequestError("Format is invalid"));
-      } else {
-        next(err);
+      console.error(err);
+      if (err.name === "CastError") {
+        return next(new BadRequestError("Invalid clothing item ID"));
       }
+      return next(err);
     });
   };
 
@@ -74,18 +74,17 @@ const unlikeClothingItem = (req, res, next) => {
       { $pull: { likes: req.user._id } },
       { new: true }
     )
-      .orFail()
-      .then((item) => res.send(item))
-      .catch((err) => {
-        console.error(err);
-        if (err.name === "DocumentNotFoundError") {
-          next(new NotFoundError("Request was not found"));
-        } else if (err.name === "CastError") {
-          next(new BadRequestError("Format is invalid"));
-        } else {
-          next(err);
-        }
-      });
+    .orFail(() => new NotFoundError("Clothing item not found"))
+    .then((likedItem) => {
+      res.send({ message: "Item unliked successfully", likedItem });
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "CastError") {
+        return next(new BadRequestError("Invalid clothing item ID"));
+      }
+      return next(err);
+    });
 
 
 }
