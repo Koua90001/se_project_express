@@ -11,10 +11,8 @@ const createItem = (req, res, next) => {
   console.log(req.user._id);
 
   clothingItem
-    .create({ name, weather, imageUrl, owner: req.user._id }) // error
-    .then((item) => {
-      return res.status(201).send({ data: item });
-    })
+    .create({ name, weather, imageUrl, owner: req.user._id })
+    .then((item) => res.status(201).send({ data: item }))
     .catch((err) => {
       if (err.name === "ValidationError") {
         next(new BadRequestError("Invalid Data"));
