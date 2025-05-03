@@ -4,20 +4,25 @@ const { NotFoundError } = require("../utils/errors/NotFoundError");
 const { ForbiddenError } = require("../utils/errors/ForbiddenError");
 
 const createItem = (req, res, next) => {
-  console.log(req)
-  console.log(req.body)
+  console.log(req);
+  console.log(req.body);
 
-  const{ name, weather, imageUrl } = req.body;
+  const { name, weather, imageUrl } = req.body;
   console.log(req.user._id);
 
-
-  clothingItem.create({ name, weather,imageUrl, owner: req.user._id }) // error
-  .then((item)=> {
-    return res.status(201).send({ data:item });
-  }).catch((err) => {
-    res.status(400).send({ message: 'Validation error'});
-  });
-}
+  clothingItem
+    .create({ name, weather, imageUrl, owner: req.user._id }) // error
+    .then((item) => {
+      return res.status(201).send({ data: item });
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        next(new BadRequestError("Invalid Data"));
+      } else {
+        next(err);
+      }
+    });
+};
 
 const getItems = (req, res, next) => {
   clothingItem
@@ -29,18 +34,18 @@ const getItems = (req, res, next) => {
     });
 };
 
-const updateItem  = (req, res) => {
-  const{itemId} = req.params;
-  const{imageURL} = req.body;
+const updateItem = (req, res) => {
+  const { itemId } = req.params;
+  const { imageURL } = req.body;
 
-clothingItem.findByIdAndUpdate(itemId, {$set: {imageURL}})
-.orFail()
-.then((item) => res.status(200).send({data:item}))
-.catch((err) => {
-  res.status(500).send({message:"Error from updateItem", err})
-})
-
-}
+  clothingItem
+    .findByIdAndUpdate(itemId, { $set: { imageURL } })
+    .orFail()
+    .then((item) => res.status(200).send({ data: item }))
+    .catch((err) => {
+      res.status(500).send({ message: "Error from updateItem", err });
+    });
+};
 
 const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
