@@ -1,0 +1,11 @@
+const NOT_FOUND_ERROR = 404;
+const DEFAULT = 500;
+const BAD_REQUEST_ERROR = 400;
+const FORBIDDEN_ERROR = 403;
+
+module.exports  = {
+  NOT_FOUND_ERROR,
+  BAD_REQUEST_ERROR,
+  FORBIDDEN_ERROR,
+  DEFAULT,
+}

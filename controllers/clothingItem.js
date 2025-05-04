@@ -28,22 +28,10 @@ const getItems = (req, res, next) => {
     .then((items) => res.send({ items }))
     .catch((err) => {
       console.error(err);
-      next( );
+      next(err );
     });
 };
 
-const updateItem = (req, res) => {
-  const { itemId } = req.params;
-  const { imageURL } = req.body;
-
-  clothingItem
-    .findByIdAndUpdate(itemId, { $set: { imageURL } })
-    .orFail()
-    .then((item) => res.status(200).send({ data: item }))
-    .catch((err) => {
-      res.status(500).send({ message: "Error from updateItem", err });
-    });
-};
 
 const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
@@ -111,4 +99,4 @@ const unlikeClothingItem = (req, res, next) => {
 }
 
 
-module.exports = { createItem, getItems, updateItem, deleteItem, likeClothingItem, unlikeClothingItem };
+module.exports = { createItem, getItems, deleteItem, likeClothingItem, unlikeClothingItem };

@@ -1,3 +1,4 @@
+const { BAD_REQUEST_ERROR } = require("../errors");
 const User = require("../models/user");
 
 const getUsers = (req, res) => {
@@ -5,7 +6,7 @@ const getUsers = (req, res) => {
     .then((users) => res.status(200).send(users))
     .catch((err) => {
       console.error(err);
-      return res.status(500).send({ message: err.message });
+      res.status(DEFAULT).send({ message: 'An error has occurred on the server' });
     });
 };
 const createUser = (req, res) => {
@@ -16,9 +17,9 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
+        res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid data' });
       }
-      return res.status(500).send({ message: err.message });
+      res.status(DEFAULT).send({ message: 'An error has occurred on the server' });
     });
 };
 const getUser = (req, res) => {
@@ -29,12 +30,12 @@ const getUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        res.status(NOT_FOUND_ERROR).send({ message: 'User not found' });
       }
       if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
+        res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid data' });
       }
-      return res.status(500).send({ message: err.message });
+      res.status(DEFAULT).send({ message: 'An error has occurred on the server' });
     });
 };
 module.exports = { getUsers, createUser, getUser };
