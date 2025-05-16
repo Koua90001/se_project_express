@@ -21,7 +21,7 @@ const getUsers = (req, res) => {
 const createUser = (req, res, next ) => {
   const { name, avatar, email, password } = req.body;
   if (!email) {
-    return next(new BadRequestError("Invalid data Format"));
+    return next(new (BAD_REQUEST_ERROR)("Invalid data Format"));
   }
 
   return User.findOne({ email })
