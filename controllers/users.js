@@ -28,7 +28,7 @@ const createUser = (req, res, next ) => {
     )
 
     .then((user) => {
-      const { password: userPassword, ...userWithoutPassword } =
+      const { password, ...userWithoutPassword } =
         user.toObject();
       res.send({ user: userWithoutPassword });
     })
@@ -49,7 +49,7 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return next(new BadRequestError("Incorrect email or password provided"));
+    return next(new (BAD_REQUEST_ERROR)("Incorrect email or password provided"));
   }
 
   return User.findUserByCredentials(email, password)
@@ -99,13 +99,13 @@ const updateProfile = (req, res, next) => {
   )
     .then((updatedUser) => {
       if (!updatedUser) {
-        return next(new NotFoundError("User not found"));
+        return next(new (NOT_FOUND_ERROR)("User not found"));
       }
       return res.send({ user: updatedUser });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return next(new BadRequestError("Invalid data"));
+        return next(new (BAD_REQUEST_ERROR)("Invalid data"));
       }
       return next(err);
     });
