@@ -43,7 +43,7 @@ const createUser = (req, res, next ) => {
     .catch((err) => {
       console.error(err);
       if (err.code === 11000) {
-        return res.status(CONFLICT_ERROR).send(("Email already in use"));
+        return res.status(CONFLICT_ERROR).send({ message: "Email already in use"});
       }
       if (err.name === "ValidationError") {
        return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid data' });
