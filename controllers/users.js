@@ -20,17 +20,24 @@ const getUsers = (req, res) => {
 };
 const createUser = (req, res, next ) => {
   const { name, avatar, email, password } = req.body;
-  bcrypt
-  .hash(password, 10)
-  .then((hashedPassword) =>
+  if (!email) {
+    return next(new BadRequestError("Invalid data Format"));
+  }
 
-  User.create({ name, avatar, email, password: hashedPassword })
-    )
-
+  return User.findOne({ email })
+    .then((matched) => {
+      if (matched) {
+        const err = new Error("The email already exists!");
+        err.code = 11000;
+        throw err;
+      }
+      return bcrypt.hash(password, 10);
+    })
+    .then((hash) => User.create({ name, avatar, email, password: hash }))
     .then((user) => {
-      const { password, ...userWithoutPassword } =
-        user.toObject();
-      res.send({ user: userWithoutPassword });
+      res
+        .status(201)
+        .send({ name: user.name, avatar: user.avatar, email: user.email });
     })
 
     .catch((err) => {
