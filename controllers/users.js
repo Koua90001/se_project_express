@@ -14,7 +14,7 @@ const { UnauthorizedError } = require("../utils/errors/UnauthorizedError");
 const createUser = (req, res, next ) => {
   const { name, avatar, email, password } = req.body;
   if (!email) {
-    return next(new (BadRequestError)("Invalid data Format"));
+    return next(new BadRequestError("Invalid data Format"));
   }
 
   return User.findOne({ email })
@@ -49,7 +49,7 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return next(new (BadRequestError)("Incorrect email or password provided"));
+    return next(new BadRequestError("Incorrect email or password provided"));
   }
 
   return User.findUserByCredentials(email, password)
@@ -99,13 +99,13 @@ const updateProfile = (req, res, next) => {
   )
     .then((updatedUser) => {
       if (!updatedUser) {
-        return next(new (NotFoundError)("User not found"));
+        return next(new NotFoundError("User not found"));
       }
       return res.send({ user: updatedUser });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return next(new (BadRequestError)("Invalid data"));
+        return next(new BadRequestError("Invalid data"));
       }
       return next(err);
     });
