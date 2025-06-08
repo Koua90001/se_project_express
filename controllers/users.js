@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const { BadRequestError,
   NotFoundError,
    DEFAULT, CONFLICT_ERROR,
-   UNAUTHORIZED_ERROR
+   
    } = require("../errors");
 const User = require("../models/user");
 const { JWT_SECRET } = require("../utils/errors/config");
