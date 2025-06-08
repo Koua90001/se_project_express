@@ -33,7 +33,8 @@ owner: {
   },
 
   likes: {
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
+    type: [{ type: mongoose.Schema.Types.ObjectId,
+    ref: "user" }],
     default: [],
   },
 
