@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const { BadRequestError,
   NotFoundError,
    DEFAULT, CONFLICT_ERROR,
-   
+
    } = require("../errors");
 const User = require("../models/user");
 const { JWT_SECRET } = require("../utils/errors/config");
@@ -40,7 +40,7 @@ const createUser = (req, res, next ) => {
         return res.status(CONFLICT_ERROR).send({ message: "Email already in use"});
       }
       if (err.name === "ValidationError") {
-       return res.status(BadRequestError).send({ message: 'Invalid data' });
+        return next(new BadRequestError("Invalid data"));
       }
       res.status(DEFAULT).send({ message: 'An error has occurred on the server' });
     });
