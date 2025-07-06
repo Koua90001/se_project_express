@@ -13,3 +13,7 @@ MongoDB and Compass
 Eslint
 Express
 Mongoose
+
+
+Weather Clothing App
+You can check out the live version of the project here: https://wtwr.dnet.hu/
