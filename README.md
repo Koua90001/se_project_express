@@ -16,4 +16,4 @@ Mongoose
 
 
 Weather Clothing App
-You can check out the live version of the project here: https://wtwr.dnet.hu/
+You can check out the live version of the project here: https://wtwr.dnet.hu/; https://github.com/Koua90001/se_project_react
